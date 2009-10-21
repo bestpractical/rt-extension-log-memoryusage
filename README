@@ -1,0 +1,19 @@
+NAME
+    RT::Extension::Log::MemoryUsage - log information about memory used by
+    RT processes
+
+DESCRIPTION
+    RT is a big application with many modules, extensions and different ways
+    to run system. As well, there are tons of ways to screw up memory usage.
+    It's hard to detect memory leaks and not only them, but just places in
+    code that like to eat lots of memory.
+
+    Purpose of this extension is to help identify requests that cause a
+    memory usage spikes.
+
+AUTHOR
+    Ruslan Zakirov <ruz@bestpractical.com>
+
+LICENSE
+    Under the same terms as perl itself.
+
