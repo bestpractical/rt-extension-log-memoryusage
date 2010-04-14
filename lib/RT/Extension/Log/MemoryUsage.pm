@@ -158,7 +158,12 @@ sub RunPs {
         $RT::Logger->error( "Couldn't run `$cmd`: $!" );
         return {};
     }
-    return $self->ParsePsOutput( $text );
+    my $res = $self->ParsePsOutput( $text );
+    unless ( $res ) {
+        warn "Couldn't parse output of `$cmd`, result is:\n$text";
+        return {};
+    }
+    return $res;
 } }
 
 sub ParsePsOutput {
@@ -167,7 +172,17 @@ sub ParsePsOutput {
 
     my ($head, $values) = split /\r*\n/, $text;
     my @head = split /(?<=\S)(?=\s)/, $head;
-    my @values = map substr($values, 0, length $_, ''), @head;
+    my @values;
+    unless ( @values ) {
+        @values = split /(?<=\S)(?=\s)/, $values;
+        @values = () unless @values == @head;
+    }
+    unless ( @values ) {
+        my $tmp = $values;
+        @values = map substr($tmp, 0, length $_, ''), @head;
+        @values = () if grep /^\S/, @values;
+    }
+    return undef unless @values;
 
     do { s/^\s+//; s/\s+$// } foreach @head, @values;
     return { map { lc($_) => shift @values } @head };
